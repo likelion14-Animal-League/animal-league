@@ -1,16 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import InfiniteScrollGame from "./components/InfiniteScrollGame";
+import MathDisturbance from "./components/MathDisturbance";
+import BaseballDisturbance from "./components/BaseballDisturbance";
 
 // 1. 공부 화면 컴포넌트
 function StudyRoom({ onExit, nickname }) {
   // 타이머 관련 상태
-  const [seconds, setSeconds] = useState(25 * 60); // 기본 25분 (초 단위)
-  const [isWorking, setIsWorking] = useState(true); // true: 공부, false: 쉬는시간
-  const [isActive, setIsActive] = useState(false);  // 타이머 작동 여부
+  const [seconds, setSeconds] = useState(25 * 60);
+  const [isWorking, setIsWorking] = useState(true);
+  const [isActive, setIsActive] = useState(false);
   
   // 통계 관련 상태
   const [completedCount, setCompletedCount] = useState(0);
-  const [totalStudyTime, setTotalStudyTime] = useState(0); // 총 공부 분(min)
+  const [totalStudyTime, setTotalStudyTime] = useState(0);
+
+  // 🎮 게임 관련 상태 (추가)
+  const [isGameOpen, setIsGameOpen] = useState(false);
+  const [activeDisturbance, setActiveDisturbance] = useState(null);
+
+  // 🎮 스크롤 제어 (추가)
+  useEffect(() => {
+    if (isGameOpen) {
+      document.body.style.overflow = "auto";
+      document.body.style.height = "auto";
+      document.documentElement.style.overflow = "auto";
+    } else {
+      document.body.style.overflow = "hidden";
+      document.body.style.height = "100%";
+      document.documentElement.style.overflow = "hidden";
+    }
+  }, [isGameOpen]);
 
   // 타이머 로직
   useEffect(() => {
@@ -20,41 +40,60 @@ function StudyRoom({ onExit, nickname }) {
         setSeconds((prevSeconds) => prevSeconds - 1);
       }, 1000);
     } else if (isActive && seconds === 0) {
-      // 타이머 종료 시점
       clearInterval(interval);
       if (isWorking) {
-        // 공부 끝 -> 쉬는시간 시작
         setCompletedCount((prev) => prev + 1);
         setTotalStudyTime((prev) => prev + 25);
-        setSeconds(5 * 60); // 5분으로 세팅
+        setSeconds(5 * 60);
         setIsWorking(false);
       } else {
-        // 쉬는시간 끝 -> 다시 공부 시작
         setSeconds(25 * 60);
         setIsWorking(true);
-        
       }
     }
     return () => clearInterval(interval);
   }, [isActive, seconds, isWorking]);
 
-  // 시간을 00:00 형식으로 변환
   const formatTime = (timeInSeconds) => {
     const mins = Math.floor(timeInSeconds / 60);
     const secs = timeInSeconds % 60;
     return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  // 총 시간을 HH:mm:ss 형식으로 변환
   const formatTotalTime = (totalMinutes) => {
     const h = Math.floor(totalMinutes / 60);
     const m = totalMinutes % 60;
-    const s = 0; // 초 단위는 생략하거나 0으로 표시
+    const s = 0;
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  };
+
+  // 🎮 게임 해제 핸들러 (추가)
+  const handleResolveDisturbance = () => {
+    setActiveDisturbance(null);
   };
 
   return (
     <div className="study-layout">
+      {/* 🎮 게임 모달 렌더링 영역 (추가) */}
+      {isGameOpen && (
+        <div className="game-full-screen-container">
+          <InfiniteScrollGame onClose={() => setIsGameOpen(false)}>
+            <h1>👹 공부 방해 모드</h1>
+            <p>천천히 내리면 결승선이 멀어집니다!</p>
+            <div style={{ fontSize: "10rem" }}>🌵</div>
+            <div style={{ fontSize: "10rem" }}>🔥</div>
+            <div style={{ fontSize: "10rem" }}>💀</div>
+          </InfiniteScrollGame>
+        </div>
+      )}
+
+      {activeDisturbance === 'math' && (
+        <MathDisturbance onResolved={handleResolveDisturbance} />
+      )}
+      {activeDisturbance === 'baseball' && (
+        <BaseballDisturbance onResolved={handleResolveDisturbance} />
+      )}
+
       <div className="bg-blur-blue"></div>
       <div className="bg-blur-green"></div>
 
@@ -62,6 +101,33 @@ function StudyRoom({ onExit, nickname }) {
         <div className="sidebar-top">
           <div className="logo-badge">C뿌리기</div>
           <button className="exit-btn-rounded" onClick={onExit}>나가기</button>
+        </div>
+
+        {/* 🎮 게임 실행 버튼들 (사이드바에 추가) */}
+        <div className="sidebar-controls" style={{ padding: '0 15px', marginTop: '20px' }}>
+          <button 
+            className="btn-disturb" 
+            style={{ backgroundColor: "#ff4d4d", marginBottom: "10px", width: "100%", padding: "10px", borderRadius: "10px", color: "white", fontWeight: "bold", border: "none", cursor: "pointer" }}
+            onClick={() => setActiveDisturbance('math')}
+          >
+            🧮 수학 방해
+          </button>
+          
+          <button 
+            className="btn-disturb" 
+            style={{ backgroundColor: "#4a90e2", marginBottom: "10px", width: "100%", padding: "10px", borderRadius: "10px", color: "white", fontWeight: "bold", border: "none", cursor: "pointer" }}
+            onClick={() => setActiveDisturbance('baseball')}
+          >
+            ⚾ 야구 방해
+          </button>
+
+          <button 
+            className="btn-disturb" 
+            style={{ backgroundColor: "orange", width: "100%", padding: "10px", borderRadius: "10px", color: "white", fontWeight: "bold", border: "none", cursor: "pointer" }}
+            onClick={() => setIsGameOpen(true)}
+          >
+            🔥 스크롤 방해
+          </button>
         </div>
 
         <div className="sidebar-footer-rounded">
@@ -82,13 +148,11 @@ function StudyRoom({ onExit, nickname }) {
         </div>
         
         <div className="timer-card-chubby">
-          {/* 쉬는 시간일 때는 색깔이 변하게 스타일 추가 가능 */}
           <div className={isWorking ? "timer-circle-red" : "timer-circle-green"}>
             <span className="timer-text">{formatTime(seconds)}</span>
           </div>
         </div>
 
-        {/* 시작/일시정지 버튼 추가 */}
         <button 
           className="timer-control-btn" 
           onClick={() => setIsActive(!isActive)}

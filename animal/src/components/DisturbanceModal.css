@@ -1,0 +1,95 @@
+/* 방해 요소 팝업 컨테이너 */
+.disturbance-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85); /* 화면 어둡게 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+  }
+  
+  .disturbance-card {
+    background: #1a1a1a;
+    border: 2px solid #ff4d4d; /* 경고 느낌의 빨간색 */
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(255, 77, 77, 0.3);
+    color: white;
+  }
+  
+  .disturbance-header {
+    font-size: 0.9rem;
+    color: #ff4d4d;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .problem-text {
+    font-size: 1.8rem;
+    margin: 1.5rem 0;
+    font-family: 'Courier New', Courier, monospace;
+  }
+  
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .answer-input {
+    background: #333;
+    border: 1px solid #555;
+    padding: 12px;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.1rem;
+    text-align: center;
+    outline: none;
+  }
+  
+  .answer-input:focus {
+    border-color: #ff4d4d;
+  }
+  
+  .submit-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  
+  .submit-btn:active {
+    transform: scale(0.95);
+  }
+  
+  .hint-text {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #aaa;
+    min-height: 1.2rem;
+  }
+  
+  /* 흔들림 애니메이션 (틀렸을 때 적용 가능) */
+  .shake {
+    animation: shake 0.5s;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
