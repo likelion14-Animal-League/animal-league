@@ -28,12 +28,11 @@ function StudyRoom({ onExit, nickname }) {
         setTotalStudyTime((prev) => prev + 25);
         setSeconds(5 * 60); // 5분으로 세팅
         setIsWorking(false);
-        alert('고생했어! 5분간 휴식 시작! 🌱');
       } else {
         // 쉬는시간 끝 -> 다시 공부 시작
         setSeconds(25 * 60);
         setIsWorking(true);
-        alert('휴식 끝! 다시 25분 집중해볼까? 🔥');
+        
       }
     }
     return () => clearInterval(interval);
