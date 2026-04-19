@@ -32,27 +32,51 @@ function StudyRoom({ onExit, nickname }) {
     }
   }, [isGameOpen]);
 
-  // 타이머 로직
-  useEffect(() => {
-    let interval = null;
-    if (isActive && seconds > 0) {
-      interval = setInterval(() => {
-        setSeconds((prevSeconds) => prevSeconds - 1);
-      }, 1000);
-    } else if (isActive && seconds === 0) {
-      clearInterval(interval);
+// 타이머 로직 (랜덤 방해 기능 통합)
+useEffect(() => {
+  let interval = null;
+  
+  if (isActive && seconds > 0) {
+    interval = setInterval(() => {
+      setSeconds((prevSeconds) => prevSeconds - 1);
+
+      // 🔥 [방해 로직] 공부 중(isWorking)일 때만 랜덤 확률로 발생
       if (isWorking) {
-        setCompletedCount((prev) => prev + 1);
-        setTotalStudyTime((prev) => prev + 25);
-        setSeconds(5 * 60);
-        setIsWorking(false);
-      } else {
-        setSeconds(25 * 60);
-        setIsWorking(true);
+        // Math.random() * 100 === 0은 약 1% 확률 (초당 한 번씩 체크)
+        // 더 자주 나오게 하려면 100을 작은 숫자(예: 30)로 바꾸세요.
+        const shouldDisturb = Math.floor(Math.random() * 100) === 0;
+
+        if (shouldDisturb) {
+          const types = ['math', 'baseball', 'scroll'];
+          const randomType = types[Math.floor(Math.random() * types.length)];
+
+          if (randomType === 'scroll') {
+            setIsGameOpen(true);
+          } else {
+            setActiveDisturbance(randomType);
+          }
+
+          // [옵션] 방해 요소가 떴을 때 타이머를 멈추고 싶다면 아래 주석을 해제하세요.
+          setIsActive(false); 
+        }
       }
+    }, 1000);
+  } else if (isActive && seconds === 0) {
+    // 타이머 종료 로직
+    clearInterval(interval);
+    if (isWorking) {
+      setCompletedCount((prev) => prev + 1);
+      setTotalStudyTime((prev) => prev + 25);
+      setSeconds(5 * 60);
+      setIsWorking(false);
+    } else {
+      setSeconds(25 * 60);
+      setIsWorking(true);
     }
-    return () => clearInterval(interval);
-  }, [isActive, seconds, isWorking]);
+  }
+  
+  return () => clearInterval(interval);
+}, [isActive, seconds, isWorking]);
 
   const formatTime = (timeInSeconds) => {
     const mins = Math.floor(timeInSeconds / 60);
