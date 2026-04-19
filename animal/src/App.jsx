@@ -3,6 +3,7 @@ import './App.css';
 import InfiniteScrollGame from "./components/InfiniteScrollGame";
 import MathDisturbance from "./components/MathDisturbance";
 import BaseballDisturbance from "./components/BaseballDisturbance";
+import MusicPlayer from "./components/MusicPlayer";
 
 // 1. 공부 화면 컴포넌트
 function StudyRoom({ onExit, nickname }) {
@@ -98,6 +99,7 @@ useEffect(() => {
 
   return (
     <div className="study-layout">
+      <MusicPlayer isActive={isActive} videoId="QUXKib-jfEM" />
       {/* 🎮 게임 모달 렌더링 영역 (추가) */}
       {isGameOpen && (
         <div className="game-full-screen-container">
