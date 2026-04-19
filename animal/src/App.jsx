@@ -70,7 +70,7 @@ function StudyRoom({ onExit, nickname }) {
         setSeconds((prevSeconds) => prevSeconds - 1);
 
         if (isWorking) {
-          const shouldDisturb = Math.floor(Math.random() * 100) === 0;
+          const shouldDisturb = Math.floor(Math.random() * 30) === 0;
           if (shouldDisturb) {
             const types = ['math', 'baseball', 'scroll', 'moving'];
             const randomType = types[Math.floor(Math.random() * types.length)];
