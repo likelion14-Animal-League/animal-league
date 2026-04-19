@@ -46,7 +46,7 @@ const Moving = ({ onClose }) => {
       setXPos({ left: oPos.left, top: oPos.top });
       setIsBlocking(true);
     } else if (stage === 3) {
-      const newOPos = { left: Math.random() * 330, top: Math.random() * 330, scale: 1 };
+      const newOPos = { left: Math.random() * 200, top: Math.random() * 80, scale: 1 };
       const newXPos = getNonOverlappingPos(newOPos);
       setOPos(newOPos);
       setXPos(newXPos);
